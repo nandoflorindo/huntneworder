@@ -19,41 +19,72 @@
             color: var(--text);
             font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
-            padding: 40px 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        header { text-align: center; margin-bottom: 40px; }
-        .logo { max-width: 130px; margin-bottom: 10px; }
-        h1 { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 2px; }
+        /* BARRA DE PESQUISA FIXA */
+        .search-header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(12, 12, 14, 0.9);
+            backdrop-filter: blur(12px);
+            padding: 15px 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+        }
+
+        #searchInput {
+            width: 90%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #1a1a1e;
+            color: #fff;
+            outline: none;
+            transition: 0.3s;
+        }
+        #searchInput:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.1); }
+
+        header { text-align: center; margin: 40px 0; }
+        .logo { 
+            max-width: 120px; 
+            margin-bottom: 10px;
+            animation: pulse-gold 3s infinite ease-in-out;
+        }
+        @keyframes pulse-gold {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(212,175,55,0.2)); }
+            50% { filter: drop-shadow(0 0 15px rgba(212,175,55,0.5)); }
+        }
+
+        h1 { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 3px; }
+        #sync-text { font-size: 0.65rem; color: var(--gold); text-transform: uppercase; margin-top: 10px; font-weight: bold; letter-spacing: 1px; }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 16px;
-            width: 100%;
-            max-width: 1200px;
+            width: 90%;
+            max-width: 1300px;
+            margin-bottom: 50px;
         }
 
         .hunt-card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 12px;
             transition: 0.2s;
             overflow: hidden;
         }
         .hunt-card:hover { border-color: #3f3f46; }
 
-        .card-header {
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-
+        .card-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .header-info h2 { margin: 0; font-size: 1rem; font-weight: 700; text-transform: uppercase; color: #fff; }
         .avail-tag { font-size: 0.7rem; font-weight: 800; margin-top: 4px; display: block; }
 
@@ -63,67 +94,42 @@
             transition: max-height 0.3s ease;
             background: #131316;
         }
-        .hunt-card.active .card-content { max-height: 1000px; border-top: 1px solid var(--border); }
+        .hunt-card.active .card-content { max-height: 1200px; border-top: 1px solid var(--border); }
 
-        .slot {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 20px;
-            border-bottom: 1px solid #1f1f23;
-        }
+        .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid #1f1f23; }
+        .time { font-family: 'Roboto Mono', monospace; font-size: 0.85rem; color: #fff; font-weight: 700; }
 
-        /* Horário mais visível */
-        .time { 
-            font-family: 'Roboto Mono', monospace; 
-            font-size: 0.85rem; 
-            color: #fff; 
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
+        /* ESTILO DO SPOT E PLAYER */
+        .player-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+        .player-row { display: flex; align-items: center; gap: 6px; }
+        .spot-tag { font-size: 0.6rem; color: #71717a; background: #27272a; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
         .p-tag {
             background: #27272a;
             color: #fff;
-            padding: 4px 10px;
+            padding: 3px 10px;
             border-radius: 4px;
             font-size: 0.7rem;
             font-weight: 700;
             border-left: 3px solid var(--gold);
             text-transform: uppercase;
         }
-        .free-label { color: var(--green); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
+        .free-label { color: var(--green); font-size: 0.75rem; font-weight: 800; }
 
-        /* Botão WhatsApp no final */
-        .whatsapp-footer {
-            padding: 10px;
-            background: #1a1a1e;
-            display: flex;
-            justify-content: center;
-            border-top: 1px solid var(--border);
-        }
-        .copy-btn {
-            background: transparent;
-            color: var(--gold);
-            border: 1px solid var(--gold);
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.2s;
-            text-transform: uppercase;
-        }
+        .whatsapp-footer { padding: 10px; background: #1a1a1e; border-top: 1px solid var(--border); }
+        .copy-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .copy-btn:hover { background: var(--gold); color: #000; }
     </style>
 </head>
 <body>
 
+<div class="search-header">
+    <input type="text" id="searchInput" placeholder="Pesquisar Local ou Player...">
+</div>
+
 <header>
     <img src="logoneworder.png" alt="NEW ORDER" class="logo">
     <h1>NEW ORDER</h1>
-    <p id="sync-text" style="font-size:0.6rem; color:#52525b; text-transform:uppercase; margin-top:10px;">Sincronizando</p>
+    <div id="sync-text">● SINCRONIZANDO DADOS...</div>
 </header>
 
 <div id="hunt-grid" class="grid"></div>
@@ -139,12 +145,14 @@
     }
 
     async function fetchData() {
+        const syncLabel = document.getElementById('sync-text');
+        syncLabel.innerText = "● SINCRONIZANDO DADOS...";
         try {
             const res = await fetch(SCRIPT_URL);
             const data = await res.json();
             render(data);
-            document.getElementById('sync-text').innerText = "Atualizado: " + new Date().toLocaleTimeString();
-        } catch (e) { console.error(e); }
+            syncLabel.innerText = "● CONECTADO - " + new Date().toLocaleTimeString();
+        } catch (e) { syncLabel.innerText = "● ERRO DE CONEXÃO"; }
     }
 
     function copyToClipboard(huntName, slotsData, vagoCount) {
@@ -152,8 +160,6 @@
         slotsData.forEach(s => {
             text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`;
         });
-        text += `\n_Gerado em: ${new Date().toLocaleTimeString()}_`;
-
         const el = document.createElement('textarea');
         el.value = text;
         document.body.appendChild(el);
@@ -172,18 +178,35 @@
             let vagoCount = 0;
             const isManual = hunt.slots.some(s => s.player.includes('['));
 
-            const processSlot = (time, pName) => {
-                const isBusy = pName.length > 0 && pName.toLowerCase() !== "livre";
+            const processSlot = (time, rawInput) => {
+                const isBusy = rawInput.length > 0 && rawInput.toLowerCase() !== "livre";
                 if (!isBusy) vagoCount++;
-                exportData.push({ time, player: isBusy ? pName : null });
+                exportData.push({ time, player: isBusy ? rawInput : null });
 
-                let html = `<div class="slot"><span class="time">${time}</span>`;
+                let html = `<div class="slot"><span class="time">${time}</span><div class="player-group">`;
+                
                 if (isBusy) {
-                    const players = pName.split(/[/,]+/).filter(n => n.trim() !== "");
-                    html += `<div class="player-group">${players.map(p => `<span class="p-tag" style="border-left-color:${getPlayerColor(p.trim())}">${p.trim()}</span>`).join('')}</div></div>`;
+                    const players = rawInput.split(/[/,]+/).filter(n => n.trim() !== "");
+                    players.forEach(p => {
+                        let name = p.trim();
+                        let spot = "";
+                        // Detecta Spot (se houver : ou -)
+                        if (name.includes(':')) {
+                            [spot, name] = name.split(':');
+                        } else if (name.includes('-')) {
+                            [spot, name] = name.split('-');
+                        }
+                        
+                        html += `
+                            <div class="player-row">
+                                ${spot ? `<span class="spot-tag">${spot.trim()}</span>` : ''}
+                                <span class="p-tag" style="border-left-color:${getPlayerColor(name.trim())}">${name.trim()}</span>
+                            </div>`;
+                    });
                 } else {
-                    html += `<span class="free-label">DISPONÍVEL</span></div>`;
+                    html += `<span class="free-label">DISPONÍVEL</span>`;
                 }
+                html += `</div></div>`;
                 return html;
             };
 
@@ -205,9 +228,8 @@
 
             const card = document.createElement('div');
             card.className = 'hunt-card';
-            
             card.innerHTML = `
-                <div class="card-header" onclick="this.classList.toggle('active'); this.nextElementSibling.style.maxHeight = this.classList.contains('active') ? '1000px' : '0'">
+                <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
                     <div class="header-info">
                         <h2>${hunt.nome}</h2>
                         <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">
@@ -223,7 +245,6 @@
                 </div>
             `;
 
-            // Lógica do Botão dentro do HTML injetado
             const btn = card.querySelector('.copy-btn');
             btn.onclick = () => {
                 copyToClipboard(hunt.nome, exportData, vagoCount);
@@ -234,6 +255,13 @@
             grid.appendChild(card);
         });
     }
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        const termo = e.target.value.toLowerCase();
+        document.querySelectorAll('.hunt-card').forEach(card => {
+            card.style.display = card.innerText.toLowerCase().includes(termo) ? 'block' : 'none';
+        });
+    });
 
     fetchData();
     setInterval(fetchData, 60000);
