@@ -22,7 +22,6 @@
             display: flex; flex-direction: column; align-items: center;
         }
 
-        /* BUSCA FIXA */
         .search-header {
             position: sticky; top: 0; width: 100%;
             background: rgba(12, 12, 14, 0.95); backdrop-filter: blur(12px);
@@ -32,7 +31,7 @@
         .search-container { position: relative; width: 90%; max-width: 500px; }
         #searchInput {
             width: 100%; padding: 12px 40px 12px 20px; border-radius: 8px;
-            border: 1px solid var(--border); background: #1a1a1e; color: #fff; outline: none;
+            border: 1px solid var(--border); background: #1a1a1e; color: #fff; outline: none; box-sizing: border-box;
         }
         #clearSearch {
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
@@ -40,14 +39,8 @@
             width: 20px; height: 20px; cursor: pointer; display: none; font-size: 10px;
         }
 
-        /* LOGO E TÍTULO */
         header { text-align: center; margin: 50px 0 30px 0; }
-        .logo { 
-            max-width: 220px; /* Aumentado consideravelmente */
-            height: auto;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 0 10px rgba(212,175,55,0.2));
-        }
+        .logo { max-width: 220px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(212,175,55,0.2)); }
         h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 4px; }
         #sync-text { font-size: 0.7rem; color: #52525b; text-transform: uppercase; margin-top: 8px; font-weight: bold; letter-spacing: 1px; }
 
@@ -71,6 +64,10 @@
         .time { font-family: 'Roboto Mono', monospace; font-size: 0.85rem; color: #fff; font-weight: 700; }
         .player-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
         .player-row { display: flex; align-items: center; gap: 6px; }
+        
+        /* TAG NOVO PLAYER */
+        .new-player-badge { font-size: 0.55rem; color: var(--gold); font-weight: 900; background: rgba(212, 175, 55, 0.1); padding: 1px 4px; border-radius: 3px; border: 1px solid var(--gold); margin-left: 4px; }
+
         .spot-tag { font-size: 0.6rem; color: #71717a; background: #27272a; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
         .p-tag { background: #27272a; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border-left: 3px solid var(--gold); text-transform: uppercase; }
         
@@ -90,8 +87,8 @@
 </div>
 
 <header>
-    <img src="logoneworder.png" alt="NEW ORDER" class="logo">
-    <h1>NEW ORDER</h1>
+    <img src="logoneworder.png" alt="NEW ORDER - HUNTS" class="logo">
+    <h1>NEW ORDER HUNTS</h1>
     <div id="sync-text">Sincronizando...</div>
 </header>
 
@@ -126,16 +123,31 @@
             const res = await fetch(SCRIPT_URL);
             const data = await res.json();
             
-            const oldDataString = localStorage.getItem('lastHunts');
-            const hasChanged = oldDataString && oldDataString !== JSON.stringify(data);
-            localStorage.setItem('lastHunts', JSON.stringify(data));
-            
-            render(data, hasChanged);
+            const history = JSON.parse(localStorage.getItem('huntsHistory') || '{}');
+            let globalChanges = [];
+
+            data.forEach(hunt => {
+                const huntID = hunt.nome;
+                const newSlots = hunt.slots.map(s => s.player.trim());
+                const oldSlots = history[huntID] || [];
+
+                // Verifica mudanças em cada slot desta hunt
+                newSlots.forEach((val, i) => {
+                    if (oldSlots[i] !== undefined && val !== oldSlots[i] && val !== "") {
+                        globalChanges.push({ hunt: huntID, index: i, newPlayer: val });
+                    }
+                });
+
+                history[huntID] = newSlots;
+            });
+
+            localStorage.setItem('huntsHistory', JSON.stringify(history));
+            render(data, globalChanges);
             document.getElementById('sync-text').innerText = "Atualizado: " + new Date().toLocaleTimeString();
         } catch (e) { document.getElementById('sync-text').innerText = "Erro de Sincronização"; }
     }
 
-    function render(data, highlightChange) {
+    function render(data, globalChanges) {
         const grid = document.getElementById('hunt-grid');
         grid.innerHTML = '';
 
@@ -145,14 +157,17 @@
             let slotsHtml = '';
             let exportData = [];
             let vagoCount = 0;
+            const huntChanges = globalChanges.filter(c => c.hunt === hunt.nome);
             const isManualHunt = hunt.slots.some(s => s.player.includes('['));
 
-            const processSlot = (time, rawInput) => {
+            const processSlot = (time, rawInput, slotIndex) => {
                 const isBusy = rawInput.length > 0 && rawInput.toLowerCase() !== "livre";
                 if (!isBusy) vagoCount++;
                 exportData.push({ time, player: isBusy ? rawInput : null });
 
                 const activeClass = isNow(time) ? 'current-slot' : '';
+                const hasSlotChange = huntChanges.some(c => c.index === slotIndex);
+
                 let html = `<div class="slot ${activeClass}"><span class="time">${time}</span><div class="player-group">`;
                 
                 if (isBusy) {
@@ -160,9 +175,11 @@
                         let name = p.trim(), spot = "";
                         if (name.includes(':')) [spot, name] = name.split(':');
                         else if (name.includes('-')) [spot, name] = name.split('-');
+                        
                         html += `<div class="player-row">
                             ${spot ? `<span class="spot-tag">${spot.trim()}</span>` : ''}
                             <span class="p-tag" style="border-left-color:${getPlayerColor(name.trim())}">${name.trim()}</span>
+                            ${hasSlotChange ? '<span class="new-player-badge">NOVO</span>' : ''}
                         </div>`;
                     });
                 } else { html += `<span class="free-label">DISPONÍVEL</span>`; }
@@ -171,26 +188,26 @@
             };
 
             if (isManualHunt) {
-                hunt.slots.forEach(slot => {
+                hunt.slots.forEach((slot, i) => {
                     const raw = slot.player.trim();
                     const match = raw.match(/\[(.*?)\]/);
-                    if (match) slotsHtml += processSlot(match[1], raw.replace(/\[.*?\]/, "").trim());
+                    if (match) slotsHtml += processSlot(match[1], raw.replace(/\[.*?\]/, "").trim(), i);
                 });
             } else {
                 for (let i = 0; i < 8; i++) {
                     const pName = hunt.slots[i] ? hunt.slots[i].player.trim() : "";
-                    slotsHtml += processSlot(turnosFixos[i], pName);
+                    slotsHtml += processSlot(turnosFixos[i], pName, i);
                 }
             }
 
             const card = document.createElement('div');
             card.className = 'hunt-card';
-            if (highlightChange) card.style.borderColor = "var(--gold)";
+            if (huntChanges.length > 0) card.style.borderColor = "var(--gold)";
 
             card.innerHTML = `
                 <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
                     <div class="header-info">
-                        <h2>${hunt.nome} ${highlightChange ? '<span style="color:var(--gold)">★</span>' : ''}</h2>
+                        <h2>${hunt.nome} ${huntChanges.length > 0 ? '<span style="color:var(--gold)">★</span>' : ''}</h2>
                         <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">● ${isManualHunt ? 'PERSONALIZADO' : vagoCount + ' VAGAS'}</span>
                     </div>
                 </div>
