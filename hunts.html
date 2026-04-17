@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>New Order - Hunts Panel</title>
+    <style>
+        :root {
+            --bg: #0c0c0e;
+            --card: #18181b;
+            --border: #27272a;
+            --gold: #d4af37;
+            --green: #10b981;
+            --red: #ef4444;
+            --text: #f4f4f5;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header { text-align: center; margin-bottom: 40px; }
+        .logo { max-width: 130px; margin-bottom: 10px; }
+        h1 { font-size: 1.5rem; font-weight: 800; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 2px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .hunt-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: 0.2s;
+            overflow: hidden;
+        }
+        .hunt-card:hover { border-color: #3f3f46; }
+
+        .card-header {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .header-info h2 { margin: 0; font-size: 1rem; font-weight: 700; text-transform: uppercase; color: #fff; }
+        .avail-tag { font-size: 0.7rem; font-weight: 800; margin-top: 4px; display: block; }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #131316;
+        }
+        .hunt-card.active .card-content { max-height: 1000px; border-top: 1px solid var(--border); }
+
+        .slot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #1f1f23;
+        }
+
+        /* Horário mais visível */
+        .time { 
+            font-family: 'Roboto Mono', monospace; 
+            font-size: 0.85rem; 
+            color: #fff; 
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .p-tag {
+            background: #27272a;
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-left: 3px solid var(--gold);
+            text-transform: uppercase;
+        }
+        .free-label { color: var(--green); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.5px; }
+
+        /* Botão WhatsApp no final */
+        .whatsapp-footer {
+            padding: 10px;
+            background: #1a1a1e;
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid var(--border);
+        }
+        .copy-btn {
+            background: transparent;
+            color: var(--gold);
+            border: 1px solid var(--gold);
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+        .copy-btn:hover { background: var(--gold); color: #000; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logoneworder.png" alt="NEW ORDER" class="logo">
+    <h1>NEW ORDER</h1>
+    <p id="sync-text" style="font-size:0.6rem; color:#52525b; text-transform:uppercase; margin-top:10px;">Sincronizado</p>
+</header>
+
+<div id="hunt-grid" class="grid"></div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOCLLCCS7oC4kj6KYzEymrb3sXXh7lSt-qEtkcX7qas23tEGDfppFxIOowPWYqQ-1v/exec';
+    const turnosFixos = ["10:00-13:00", "13:00-16:00", "16:00-19:00", "19:00-22:00", "22:00-01:00", "01:00-04:00", "04:00-07:00", "07:00-10:00"];
+
+    function getPlayerColor(name) {
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        return `hsl(${Math.abs(hash) % 360}, 50%, 50%)`;
+    }
+
+    async function fetchData() {
+        try {
+            const res = await fetch(SCRIPT_URL);
+            const data = await res.json();
+            render(data);
+            document.getElementById('sync-text').innerText = "Atualizado: " + new Date().toLocaleTimeString();
+        } catch (e) { console.error(e); }
+    }
+
+    function copyToClipboard(huntName, slotsData, vagoCount) {
+        let text = `⚔️ *NEW ORDER - STATUS HUNT*\n📍 *Local:* ${huntName.toUpperCase()}\n✅ *Vagas:* ${vagoCount > 0 ? vagoCount + ' disponíveis' : 'LOTADO'}\n\n`;
+        slotsData.forEach(s => {
+            text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`;
+        });
+        text += `\n_Gerado em: ${new Date().toLocaleTimeString()}_`;
+
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
+
+    function render(data) {
+        const grid = document.getElementById('hunt-grid');
+        grid.innerHTML = '';
+
+        data.forEach(hunt => {
+            let slotsHtml = '';
+            let exportData = [];
+            let vagoCount = 0;
+            const isManual = hunt.slots.some(s => s.player.includes('['));
+
+            const processSlot = (time, pName) => {
+                const isBusy = pName.length > 0 && pName.toLowerCase() !== "livre";
+                if (!isBusy) vagoCount++;
+                exportData.push({ time, player: isBusy ? pName : null });
+
+                let html = `<div class="slot"><span class="time">${time}</span>`;
+                if (isBusy) {
+                    const players = pName.split(/[/,]+/).filter(n => n.trim() !== "");
+                    html += `<div class="player-group">${players.map(p => `<span class="p-tag" style="border-left-color:${getPlayerColor(p.trim())}">${p.trim()}</span>`).join('')}</div></div>`;
+                } else {
+                    html += `<span class="free-label">DISPONÍVEL</span></div>`;
+                }
+                return html;
+            };
+
+            if (isManual) {
+                hunt.slots.forEach(slot => {
+                    const raw = slot.player.trim();
+                    if (!raw) return;
+                    const match = raw.match(/\[(.*?)\]/);
+                    let time = match ? match[1] : "--:--";
+                    let pName = raw.replace(/\[.*?\]/, "").trim();
+                    slotsHtml += processSlot(time, pName);
+                });
+            } else {
+                for (let i = 0; i < 8; i++) {
+                    const pName = hunt.slots[i] ? hunt.slots[i].player.trim() : "";
+                    slotsHtml += processSlot(turnosFixos[i], pName);
+                }
+            }
+
+            const card = document.createElement('div');
+            card.className = 'hunt-card';
+            
+            card.innerHTML = `
+                <div class="card-header" onclick="this.classList.toggle('active'); this.nextElementSibling.style.maxHeight = this.classList.contains('active') ? '1000px' : '0'">
+                    <div class="header-info">
+                        <h2>${hunt.nome}</h2>
+                        <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">
+                            ● ${isManual ? 'PERSONALIZADO' : (vagoCount > 0 ? vagoCount + ' VAGAS' : 'LOTADO')}
+                        </span>
+                    </div>
+                </div>
+                <div class="card-content">
+                    ${slotsHtml}
+                    <div class="whatsapp-footer">
+                        <button class="copy-btn">Copiar para WhatsApp</button>
+                    </div>
+                </div>
+            `;
+
+            // Lógica do Botão dentro do HTML injetado
+            const btn = card.querySelector('.copy-btn');
+            btn.onclick = () => {
+                copyToClipboard(hunt.nome, exportData, vagoCount);
+                btn.innerText = 'COPIADO!';
+                setTimeout(() => btn.innerText = 'Copiar para WhatsApp', 2000);
+            };
+
+            grid.appendChild(card);
+        });
+    }
+
+    fetchData();
+    setInterval(fetchData, 60000);
+</script>
+</body>
+</html>
