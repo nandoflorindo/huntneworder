@@ -25,55 +25,86 @@
         .search-header {
             position: sticky; top: 0; width: 100%;
             background: rgba(12, 12, 14, 0.95); backdrop-filter: blur(12px);
-            padding: 15px 0; z-index: 1000; border-bottom: 1px solid var(--border);
+            padding: 10px 0; z-index: 1000; border-bottom: 1px solid var(--border);
             display: flex; justify-content: center;
         }
-        .search-container { position: relative; width: 90%; max-width: 500px; }
+        .search-container { position: relative; width: 90%; max-width: 400px; }
         #searchInput {
-            width: 100%; padding: 12px 40px 12px 20px; border-radius: 8px;
-            border: 1px solid var(--border); background: #1a1a1e; color: #fff; outline: none; box-sizing: border-box;
+            width: 100%; padding: 8px 35px 8px 15px; border-radius: 6px;
+            border: 1px solid var(--border); background: #1a1a1e; color: #fff; outline: none; box-sizing: border-box; font-size: 0.9rem;
         }
         #clearSearch {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
             background: #27272a; color: #fff; border: none; border-radius: 50%;
-            width: 20px; height: 20px; cursor: pointer; display: none; font-size: 10px;
+            width: 18px; height: 18px; cursor: pointer; display: none; font-size: 9px;
         }
 
-        header { text-align: center; margin: 50px 0 30px 0; }
-        .logo { max-width: 220px; height: auto; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(212,175,55,0.2)); }
-        h1 { font-size: 1.8rem; font-weight: 900; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 4px; }
-        #sync-text { font-size: 0.7rem; color: #52525b; text-transform: uppercase; margin-top: 8px; font-weight: bold; letter-spacing: 1px; }
+        header { text-align: center; margin: 30px 0 20px 0; }
+        .logo { max-width: 150px; height: auto; margin-bottom: 10px; }
+        h1 { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 3px; }
+        #sync-text { font-size: 0.6rem; color: #52525b; text-transform: uppercase; margin-top: 5px; font-weight: bold; }
+
+        /* Estilo dos Separadores */
+        .category-title {
+            width: 95%; max-width: 1400px;
+            margin: 30px 0 15px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--gold);
+            color: var(--gold);
+            font-size: 1.1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .category-title::before { content: '⚔️'; font-size: 1rem; }
 
         .grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-            gap: 16px; width: 90%; max-width: 1300px; margin-bottom: 80px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px; width: 95%; max-width: 1400px; margin-bottom: 30px;
         }
 
-        .hunt-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: 0.2s; position: relative; }
-        .card-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .header-info h2 { margin: 0; font-size: 1rem; font-weight: 700; text-transform: uppercase; color: #fff; }
+        .hunt-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: 0.2s; }
+        .card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        
+        .header-info { display: flex; flex-direction: column; gap: 4px; }
+        .header-info h2 { margin: 0; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #fff; }
+        
+        .hunt-obs { 
+            display: inline-block; 
+            font-size: 0.6rem; 
+            color: var(--gold); 
+            background: rgba(212, 175, 55, 0.08); 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .avail-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
 
         .card-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: #131316; }
-        .hunt-card.active .card-content { max-height: 1500px; border-top: 1px solid var(--border); }
+        .hunt-card.active .card-content { max-height: 1000px; border-top: 1px solid var(--border); }
 
-        .slot { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid #1f1f23; }
+        .slot { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-bottom: 1px solid #1f1f23; }
+        .current-slot { background: rgba(212, 175, 55, 0.05) !important; border-left: 3px solid var(--gold) !important; }
         
-        .current-slot { background: rgba(212, 175, 55, 0.1) !important; border-left: 5px solid var(--gold) !important; }
-        .current-slot .time { color: var(--gold) !important; font-weight: 900 !important; }
+        .time { font-family: 'Roboto Mono', monospace; font-size: 0.75rem; color: #a1a1aa; font-weight: 600; }
+        .player-group { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+        .player-row { display: flex; align-items: center; gap: 4px; }
+        
+        .new-player-badge { font-size: 0.5rem; color: var(--gold); font-weight: 900; background: rgba(212, 175, 55, 0.1); padding: 0px 3px; border-radius: 2px; border: 1px solid var(--gold); }
 
-        .time { font-family: 'Roboto Mono', monospace; font-size: 0.85rem; color: #fff; font-weight: 700; }
-        .player-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-        .player-row { display: flex; align-items: center; gap: 6px; }
+        .spot-tag { font-size: 0.55rem; color: #a1a1aa; background: #27272a; padding: 1px 4px; border-radius: 3px; text-transform: uppercase; }
+        .p-tag { background: #27272a; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 0.7rem; font-weight: 600; border-left: 2px solid var(--gold); }
         
-        /* TAG NOVO PLAYER */
-        .new-player-badge { font-size: 0.55rem; color: var(--gold); font-weight: 900; background: rgba(212, 175, 55, 0.1); padding: 1px 4px; border-radius: 3px; border: 1px solid var(--gold); margin-left: 4px; }
-
-        .spot-tag { font-size: 0.6rem; color: #71717a; background: #27272a; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
-        .p-tag { background: #27272a; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border-left: 3px solid var(--gold); text-transform: uppercase; }
+        .free-label { color: var(--green); font-size: 0.65rem; font-weight: 700; opacity: 0.8; }
         
-        .free-label { color: var(--green); font-size: 0.75rem; font-weight: 800; }
-        .whatsapp-footer { padding: 12px; background: #1a1a1e; border-top: 1px solid var(--border); }
-        .copy-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
+        .whatsapp-footer { padding: 8px; background: #1a1a1e; }
+        .copy-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
         .copy-btn:hover { background: var(--gold); color: #000; }
     </style>
 </head>
@@ -81,27 +112,35 @@
 
 <div class="search-header">
     <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Pesquisar Local ou Player...">
+        <input type="text" id="searchInput" placeholder="Buscar local ou player...">
         <button id="clearSearch">X</button>
     </div>
 </div>
 
 <header>
-    <img src="logoneworder.png" alt="NEW ORDER - HUNTS" class="logo">
+    <img src="logoneworder.png" alt="NEW ORDER" class="logo">
     <h1>NEW ORDER HUNTS</h1>
     <div id="sync-text">Sincronizando...</div>
 </header>
 
-<div id="hunt-grid" class="grid"></div>
+<div id="main-container" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+    </div>
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOCLLCCS7oC4kj6KYzEymrb3sXXh7lSt-qEtkcX7qas23tEGDfppFxIOowPWYqQ-1v/exec';
     const turnosFixos = ["10:00-13:00", "13:00-16:00", "16:00-19:00", "19:00-22:00", "22:00-01:00", "01:00-04:00", "04:00-07:00", "07:00-10:00"];
 
+    // Defina as categorias aqui baseadas no começo do nome
+    const CATEGORIAS = [
+        { id: 'POI', label: 'Hunts POI', prefixos: ['POI'] },
+        { id: 'WZ', label: 'Hunts Warzone', prefixos: ['WZ', 'Warzone'] },
+        { id: 'QUEST', label: 'Quests & Acessos', prefixos: ['Quest', 'Acesso'] }
+    ];
+
     function getPlayerColor(name) {
         let hash = 0;
         for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        return `hsl(${Math.abs(hash) % 360}, 50%, 50%)`;
+        return `hsl(${Math.abs(hash) % 360}, 50%, 60%)`;
     }
 
     function isNow(timeRange) {
@@ -112,7 +151,6 @@
                 const [h, m] = t.trim().split(':');
                 return (parseInt(h) * 60) + (parseInt(m) || 0);
             });
-            if (parts.length < 2) return false;
             const [start, end] = parts;
             return start < end ? (currentMin >= start && currentMin < end) : (currentMin >= start || currentMin < end);
         } catch(e) { return false; }
@@ -122,7 +160,6 @@
         try {
             const res = await fetch(SCRIPT_URL);
             const data = await res.json();
-            
             const history = JSON.parse(localStorage.getItem('huntsHistory') || '{}');
             let globalChanges = [];
 
@@ -130,14 +167,11 @@
                 const huntID = hunt.nome;
                 const newSlots = hunt.slots.map(s => s.player.trim());
                 const oldSlots = history[huntID] || [];
-
-                // Verifica mudanças em cada slot desta hunt
                 newSlots.forEach((val, i) => {
                     if (oldSlots[i] !== undefined && val !== oldSlots[i] && val !== "") {
                         globalChanges.push({ hunt: huntID, index: i, newPlayer: val });
                     }
                 });
-
                 history[huntID] = newSlots;
             });
 
@@ -148,80 +182,122 @@
     }
 
     function render(data, globalChanges) {
-        const grid = document.getElementById('hunt-grid');
-        grid.innerHTML = '';
+        const container = document.getElementById('main-container');
+        container.innerHTML = '';
+
+        // Objeto para organizar hunts por categoria
+        const grouped = { 'OUTROS': [] };
+        CATEGORIAS.forEach(cat => grouped[cat.id] = []);
 
         data.forEach(hunt => {
             if (!hunt.nome) return;
-
-            let slotsHtml = '';
-            let exportData = [];
-            let vagoCount = 0;
-            const huntChanges = globalChanges.filter(c => c.hunt === hunt.nome);
-            const isManualHunt = hunt.slots.some(s => s.player.includes('['));
-
-            const processSlot = (time, rawInput, slotIndex) => {
-                const isBusy = rawInput.length > 0 && rawInput.toLowerCase() !== "livre";
-                if (!isBusy) vagoCount++;
-                exportData.push({ time, player: isBusy ? rawInput : null });
-
-                const activeClass = isNow(time) ? 'current-slot' : '';
-                const hasSlotChange = huntChanges.some(c => c.index === slotIndex);
-
-                let html = `<div class="slot ${activeClass}"><span class="time">${time}</span><div class="player-group">`;
-                
-                if (isBusy) {
-                    rawInput.split(/[/,]+/).filter(n => n.trim() !== "").forEach(p => {
-                        let name = p.trim(), spot = "";
-                        if (name.includes(':')) [spot, name] = name.split(':');
-                        else if (name.includes('-')) [spot, name] = name.split('-');
-                        
-                        html += `<div class="player-row">
-                            ${spot ? `<span class="spot-tag">${spot.trim()}</span>` : ''}
-                            <span class="p-tag" style="border-left-color:${getPlayerColor(name.trim())}">${name.trim()}</span>
-                            ${hasSlotChange ? '<span class="new-player-badge">NOVO</span>' : ''}
-                        </div>`;
-                    });
-                } else { html += `<span class="free-label">DISPONÍVEL</span>`; }
-                html += `</div></div>`;
-                return html;
-            };
-
-            if (isManualHunt) {
-                hunt.slots.forEach((slot, i) => {
-                    const raw = slot.player.trim();
-                    const match = raw.match(/\[(.*?)\]/);
-                    if (match) slotsHtml += processSlot(match[1], raw.replace(/\[.*?\]/, "").trim(), i);
-                });
-            } else {
-                for (let i = 0; i < 8; i++) {
-                    const pName = hunt.slots[i] ? hunt.slots[i].player.trim() : "";
-                    slotsHtml += processSlot(turnosFixos[i], pName, i);
+            let catEncontrada = 'OUTROS';
+            for (const cat of CATEGORIAS) {
+                if (cat.prefixos.some(p => hunt.nome.toUpperCase().startsWith(p.toUpperCase()))) {
+                    catEncontrada = cat.id;
+                    break;
                 }
             }
+            grouped[catEncontrada].push(hunt);
+        });
 
-            const card = document.createElement('div');
-            card.className = 'hunt-card';
-            if (huntChanges.length > 0) card.style.borderColor = "var(--gold)";
+        // Renderizar Grupos
+        const gruposParaRenderizar = [...CATEGORIAS, { id: 'OUTROS', label: 'Outras Hunts' }];
 
-            card.innerHTML = `
-                <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
-                    <div class="header-info">
-                        <h2>${hunt.nome} ${huntChanges.length > 0 ? '<span style="color:var(--gold)">★</span>' : ''}</h2>
-                        <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">● ${isManualHunt ? 'PERSONALIZADO' : vagoCount + ' VAGAS'}</span>
+        gruposParaRenderizar.forEach(grupo => {
+            const huntsNoGrupo = grouped[grupo.id];
+            if (huntsNoGrupo.length === 0) return;
+
+            // Criar Título do Separador
+            const title = document.createElement('div');
+            title.className = 'category-title';
+            title.innerText = grupo.label;
+            container.appendChild(title);
+
+            // Criar Grid do Grupo
+            const grid = document.createElement('div');
+            grid.className = 'grid';
+            container.appendChild(grid);
+
+            huntsNoGrupo.forEach(hunt => {
+                let cleanName = hunt.nome;
+                let observation = "";
+                const obsMatch = hunt.nome.match(/\((.*?)\)/);
+                if (obsMatch) {
+                    cleanName = hunt.nome.replace(/\(.*?\)/, '').trim();
+                    observation = obsMatch[1];
+                }
+
+                let slotsHtml = '';
+                let exportData = [];
+                let vagoCount = 0;
+                const huntChanges = globalChanges.filter(c => c.hunt === hunt.nome);
+                const isManualHunt = hunt.slots.some(s => s.player.includes('['));
+
+                const processSlot = (time, rawInput, slotIndex) => {
+                    const isBusy = rawInput.length > 0 && rawInput.toLowerCase() !== "livre";
+                    if (!isBusy) vagoCount++;
+                    exportData.push({ time, player: isBusy ? rawInput : null });
+
+                    const activeClass = isNow(time) ? 'current-slot' : '';
+                    const hasSlotChange = huntChanges.some(c => c.index === slotIndex);
+
+                    let html = `<div class="slot ${activeClass}"><span class="time">${time}</span><div class="player-group">`;
+                    if (isBusy) {
+                        rawInput.split(/[/,]+/).filter(n => n.trim() !== "").forEach(p => {
+                            let name = p.trim(), spot = "";
+                            if (name.includes(':')) [spot, name] = name.split(':');
+                            else if (name.includes('-')) [spot, name] = name.split('-');
+                            html += `<div class="player-row">
+                                ${spot ? `<span class="spot-tag">${spot.trim()}</span>` : ''}
+                                <span class="p-tag" style="border-left-color:${getPlayerColor(name.trim())}">${name.trim()}</span>
+                                ${hasSlotChange ? '<span class="new-player-badge">NOVO</span>' : ''}
+                            </div>`;
+                        });
+                    } else { html += `<span class="free-label">DISPONÍVEL</span>`; }
+                    html += `</div></div>`;
+                    return html;
+                };
+
+                if (isManualHunt) {
+                    hunt.slots.forEach((slot, i) => {
+                        const raw = slot.player.trim();
+                        const match = raw.match(/\[(.*?)\]/);
+                        if (match) slotsHtml += processSlot(match[1], raw.replace(/\[.*?\]/, "").trim(), i);
+                    });
+                } else {
+                    for (let i = 0; i < 8; i++) {
+                        const pName = hunt.slots[i] ? hunt.slots[i].player.trim() : "";
+                        slotsHtml += processSlot(turnosFixos[i], pName, i);
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = 'hunt-card';
+                if (huntChanges.length > 0) card.style.borderColor = "var(--gold)";
+
+                card.innerHTML = `
+                    <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
+                        <div class="header-info">
+                            <h2>${cleanName} ${huntChanges.length > 0 ? '★' : ''}</h2>
+                            ${observation ? `<span class="hunt-obs">${observation}</span>` : ''}
+                        </div>
+                        <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">
+                            ${isManualHunt ? 'Personalizado' : vagoCount + ' Vagas'}
+                        </span>
                     </div>
-                </div>
-                <div class="card-content">${slotsHtml}<div class="whatsapp-footer"><button class="copy-btn">Copiar para WhatsApp</button></div></div>
-            `;
+                    <div class="card-content">${slotsHtml}<div class="whatsapp-footer"><button class="copy-btn">Copiar WhatsApp</button></div></div>
+                `;
 
-            card.querySelector('.copy-btn').onclick = () => {
-                let text = `⚔️ *NEW ORDER - STATUS HUNT*\n📍 *Local:* ${hunt.nome.toUpperCase()}\n\n`;
-                exportData.forEach(s => text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`);
-                const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-                card.querySelector('.copy-btn').innerText = 'COPIADO!';
-                setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar para WhatsApp', 2000);
-            };
-            grid.appendChild(card);
+                card.querySelector('.copy-btn').onclick = () => {
+                    let text = `⚔️ *${cleanName.toUpperCase()}* ${observation ? `(${observation})` : ''}\n\n`;
+                    exportData.forEach(s => text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`);
+                    const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+                    card.querySelector('.copy-btn').innerText = 'COPIADO!';
+                    setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar WhatsApp', 2000);
+                };
+                grid.appendChild(card);
+            });
         });
     }
 
@@ -230,6 +306,9 @@
     sInput.addEventListener('input', (e) => {
         const termo = e.target.value.toLowerCase();
         cBtn.style.display = termo ? 'block' : 'none';
+        
+        // Esconde cards e títulos de categoria vazios durante a busca
+        document.querySelectorAll('.category-title').forEach(t => t.style.display = termo ? 'none' : 'flex');
         document.querySelectorAll('.hunt-card').forEach(card => card.style.display = card.innerText.toLowerCase().includes(termo) ? 'block' : 'none');
     });
     cBtn.onclick = () => { sInput.value = ''; sInput.dispatchEvent(new Event('input')); };
