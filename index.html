@@ -2,313 +2,325 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>New Order - Planilhada</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order - Pro Dashboard</title>
     <style>
         :root {
-            --bg: #0c0c0e;
-            --card: #18181b;
+            --bg: #050507;
+            --card: #111114;
             --border: #27272a;
             --gold: #d4af37;
+            --gold-light: #f1d57a;
             --green: #10b981;
-            --red: #ef4444;
             --text: #f4f4f5;
+            --accent: rgba(212, 175, 55, 0.1);
         }
 
-        body {
+        body, html {
             background-color: var(--bg);
             color: var(--text);
             font-family: 'Inter', sans-serif;
             margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
         }
 
+        /* --- ANIMAÇÃO DE ENTRADA (SPLASH SCREEN) --- */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: all 1s cubic-bezier(0.9, 0, 0.1, 1);
+        }
+
+        .loader-ring {
+            width: 80px; height: 80px; border: 2px solid rgba(212, 175, 55, 0.1);
+            border-top: 2px solid var(--gold); border-radius: 50%;
+            animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            position: relative;
+        }
+
+        .loader-ring::after {
+            content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid rgba(212, 175, 55, 0.05); border-top: 1px solid var(--gold-light);
+            border-radius: 50%; animation: spin 1.5s reverse infinite;
+        }
+
+        .sync-text-splash {
+            margin-top: 25px; font-size: 0.65rem; letter-spacing: 5px;
+            color: var(--gold); text-transform: uppercase; font-weight: 900;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* Efeito de transição do conteúdo */
+        #main-wrapper { opacity: 0; transform: scale(0.98); filter: blur(10px); transition: all 1.2s ease; }
+        body.loaded #main-wrapper { opacity: 1; transform: scale(1); filter: blur(0); }
+        body.loaded #splash-screen { opacity: 0; visibility: hidden; }
+
+        /* --- ESTRUTURA DASHBOARD --- */
         .search-header {
             position: sticky; top: 0; width: 100%;
-            background: rgba(12, 12, 14, 0.95); backdrop-filter: blur(12px);
-            padding: 10px 0; z-index: 1000; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: center;
+            background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
+            padding: 15px 0; z-index: 1000; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: center; align-items: center;
         }
-        .search-container { position: relative; width: 90%; max-width: 400px; }
+        .search-container { position: relative; width: 90%; max-width: 450px; display: flex; align-items: center; }
         #searchInput {
-            width: 100%; padding: 8px 35px 8px 15px; border-radius: 6px;
-            border: 1px solid var(--border); background: #1a1a1e; color: #fff; outline: none; box-sizing: border-box; font-size: 0.9rem;
+            width: 100%; padding: 12px 45px 12px 18px; border-radius: 10px;
+            border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05);
+            color: #fff; outline: none; box-sizing: border-box; transition: 0.3s;
         }
+        #searchInput:focus { border-color: var(--gold); background: rgba(255, 255, 255, 0.08); }
         #clearSearch {
-            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-            background: #27272a; color: #fff; border: none; border-radius: 50%;
-            width: 18px; height: 18px; cursor: pointer; display: none; font-size: 9px;
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            background: var(--border); color: #fff; border: none; border-radius: 50%;
+            width: 22px; height: 22px; cursor: pointer; display: none; font-size: 10px;
+            align-items: center; justify-content: center;
         }
 
-        header { text-align: center; margin: 30px 0 20px 0; }
-        .logo { max-width: 150px; height: auto; margin-bottom: 10px; }
-        h1 { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; color: var(--gold); margin: 0; letter-spacing: 3px; }
-        #sync-text { font-size: 0.6rem; color: #52525b; text-transform: uppercase; margin-top: 5px; font-weight: bold; }
+        header { text-align: center; margin: 60px 0 40px; }
+        .logo { max-width: 130px; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3)); }
+        h1 { font-size: 1.4rem; font-weight: 900; color: var(--gold); letter-spacing: 5px; text-transform: uppercase; margin: 20px 0 5px; }
+        #sync-text { font-size: 0.6rem; color: #52525b; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; }
 
-        /* Estilo dos Separadores */
-        .category-title {
-            width: 95%; max-width: 1400px;
-            margin: 30px 0 15px 0;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--gold);
-            color: var(--gold);
-            font-size: 1.1rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .category-title::before { content: '⚔️'; font-size: 1rem; }
-
-        .grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 12px; width: 95%; max-width: 1400px; margin-bottom: 30px;
+        .section-container { width: 98%; max-width: 1500px; margin: 0 auto; }
+        .section-title {
+            margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+            color: var(--gold); font-size: 0.9rem; font-weight: 900; text-transform: uppercase; letter-spacing: 3px;
         }
 
-        .hunt-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: 0.2s; }
-        .card-header { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        
-        .header-info { display: flex; flex-direction: column; gap: 4px; }
-        .header-info h2 { margin: 0; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #fff; }
-        
-        .hunt-obs { 
-            display: inline-block; 
-            font-size: 0.6rem; 
-            color: var(--gold); 
-            background: rgba(212, 175, 55, 0.08); 
-            padding: 2px 6px; 
-            border-radius: 4px; 
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            font-weight: 600;
-            width: fit-content;
+        .column-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 15px; margin-bottom: 30px;
+        }
+        .column-group { display: flex; flex-direction: column; gap: 12px; }
+        .column-label {
+            font-size: 0.7rem; color: #a1a1aa; font-weight: 800; text-transform: uppercase;
+            border-left: 3px solid var(--gold); padding-left: 10px; margin-bottom: 5px;
         }
 
-        .avail-tag { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+        .hunt-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hunt-card:hover { border-color: #444; transform: translateY(-3px); }
+        
+        .card-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .header-left { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        .header-left h2 { margin: 0; font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; }
+        .info-badge {
+            display: inline-block; font-size: 0.6rem; color: var(--gold);
+            background: rgba(212, 175, 55, 0.08); padding: 2px 8px;
+            border-radius: 5px; border: 1px solid rgba(212, 175, 55, 0.2);
+            font-weight: 800; width: fit-content; text-transform: uppercase;
+        }
 
-        .card-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; background: #131316; }
-        .hunt-card.active .card-content { max-height: 1000px; border-top: 1px solid var(--border); }
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .map-btn {
+            font-size: 0.6rem; color: var(--gold); font-weight: 900;
+            background: rgba(212, 175, 55, 0.05); padding: 4px 10px;
+            border-radius: 6px; border: 1px solid var(--gold);
+            text-transform: uppercase; transition: 0.2s;
+        }
+        .map-btn:hover { background: var(--gold); color: #000; }
+        .avail-tag { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
 
-        .slot { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-bottom: 1px solid #1f1f23; }
-        .current-slot { background: rgba(212, 175, 55, 0.05) !important; border-left: 3px solid var(--gold) !important; }
-        
-        .time { font-family: 'Roboto Mono', monospace; font-size: 0.75rem; color: #a1a1aa; font-weight: 600; }
-        .player-group { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
-        .player-row { display: flex; align-items: center; gap: 4px; }
-        
-        .new-player-badge { font-size: 0.5rem; color: var(--gold); font-weight: 900; background: rgba(212, 175, 55, 0.1); padding: 0px 3px; border-radius: 2px; border: 1px solid var(--gold); }
+        .card-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; background: #0c0c0e; }
+        .hunt-card.active .card-content { max-height: 1500px; border-top: 1px solid var(--border); }
 
-        .spot-tag { font-size: 0.55rem; color: #a1a1aa; background: #27272a; padding: 1px 4px; border-radius: 3px; text-transform: uppercase; }
-        .p-tag { background: #27272a; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 0.7rem; font-weight: 600; border-left: 2px solid var(--gold); }
+        .slot { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #1a1a1d; font-size: 0.8rem; align-items: center; }
+        .current-slot { background: var(--accent) !important; border-left: 4px solid var(--gold) !important; }
+        .time { font-family: 'Roboto Mono', monospace; color: #71717a; font-weight: 600; }
+        .p-tag { background: #27272a; color: #fff; padding: 3px 10px; border-radius: 6px; font-weight: 600; border-left: 2px solid var(--gold); }
+        .free-label { color: var(--green); font-weight: 800; opacity: 0.8; }
         
-        .free-label { color: var(--green); font-size: 0.65rem; font-weight: 700; opacity: 0.8; }
-        
-        .whatsapp-footer { padding: 8px; background: #1a1a1e; }
-        .copy-btn { background: transparent; color: var(--gold); border: 1px solid var(--gold); width: 100%; padding: 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 800; cursor: pointer; text-transform: uppercase; }
-        .copy-btn:hover { background: var(--gold); color: #000; }
+        .copy-btn { 
+            background: transparent; color: var(--gold); border: 1px solid var(--gold); 
+            width: calc(100% - 30px); margin: 15px; padding: 10px; border-radius: 8px; 
+            font-size: 0.75rem; font-weight: 800; cursor: pointer; text-transform: uppercase;
+        }
+
+        #zoomModal {
+            display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); backdrop-filter: blur(15px); justify-content: center; align-items: center;
+        }
+        #zoomModal img { max-width: 90%; max-height: 90%; border-radius: 8px; border: 2px solid var(--gold); box-shadow: 0 0 50px rgba(212, 175, 55, 0.3); }
     </style>
 </head>
 <body>
 
-<div class="search-header">
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Buscar local ou player...">
-        <button id="clearSearch">X</button>
-    </div>
+<div id="splash-screen">
+    <div class="loader-ring"></div>
+    <div class="sync-text-splash">Iniciando Protocolos</div>
 </div>
 
-<header>
-    <img src="logoneworder.png" alt="NEW ORDER" class="logo">
-    <h1>NEW ORDER HUNTS</h1>
-    <div id="sync-text">Sincronizando...</div>
-</header>
+<div id="main-wrapper">
+    <div id="zoomModal" onclick="this.style.display='none'"><img src="" id="modalImg"></div>
 
-<div id="main-container" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+    <div class="search-header">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar hunt ou player ativo...">
+            <button id="clearSearch">✕</button>
+        </div>
     </div>
+
+    <header>
+        <img src="logoneworder.png" alt="NEW ORDER" class="logo">
+        <h1>New Order Dashboard</h1>
+        <div id="sync-text">SISTEMA OPERACIONAL</div>
+    </header>
+
+    <div id="main-container" class="section-container"></div>
+</div>
 
 <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOCLLCCS7oC4kj6KYzEymrb3sXXh7lSt-qEtkcX7qas23tEGDfppFxIOowPWYqQ-1v/exec';
     const turnosFixos = ["10:00-13:00", "13:00-16:00", "16:00-19:00", "19:00-22:00", "22:00-01:00", "01:00-04:00", "04:00-07:00", "07:00-10:00"];
 
-    // Defina as categorias aqui baseadas no começo do nome
-    const CATEGORIAS = [
-        { id: 'POI', label: 'Hunts POI', prefixos: ['POI'] },
-        { id: 'WZ', label: 'Hunts Warzone', prefixos: ['WZ', 'Warzone'] },
-        { id: 'QUEST', label: 'Quests & Acessos', prefixos: ['Quest', 'Acesso'] }
-    ];
+    const MAPAS_CONFIG = {
+        "POI Selo EK e RP (Norte)": "eknorte.jpeg",
+        "POI Selo EK e RP (Sul Esquerda)": "eksulesquerda.jpeg",
+        "POI Selo EK e RP (Sul Direita)": "eksuldireita.jpeg"
+    };
 
-    function getPlayerColor(name) {
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        return `hsl(${Math.abs(hash) % 360}, 50%, 60%)`;
-    }
-
-    function isNow(timeRange) {
+    function isNow(range) {
         try {
             const now = new Date();
-            const currentMin = now.getHours() * 60 + now.getMinutes();
-            const parts = timeRange.replace(/h/g, ':').split('-').map(t => {
+            const cur = now.getHours() * 60 + now.getMinutes();
+            const [start, end] = range.split('-').map(t => {
                 const [h, m] = t.trim().split(':');
                 return (parseInt(h) * 60) + (parseInt(m) || 0);
             });
-            const [start, end] = parts;
-            return start < end ? (currentMin >= start && currentMin < end) : (currentMin >= start || currentMin < end);
+            return start < end ? (cur >= start && cur < end) : (cur >= start || cur < end);
         } catch(e) { return false; }
+    }
+
+    function createCard(hunt) {
+        const mapaLocal = MAPAS_CONFIG[hunt.nome];
+        let cleanName = hunt.nome;
+        let infoBadge = "";
+
+        const match = hunt.nome.match(/\((.*?)\)/);
+        if (match) {
+            cleanName = hunt.nome.replace(/\(.*?\)/, '').trim();
+            infoBadge = match[1];
+        }
+
+        let slotsHtml = '';
+        let vagoCount = 0;
+        let exportData = [];
+        const isManual = hunt.slots.some(s => s.player.includes('['));
+
+        const process = (time, raw) => {
+            const isBusy = raw.length > 0 && raw.toLowerCase() !== "livre";
+            if (!isBusy) vagoCount++;
+            exportData.push({ time, player: isBusy ? raw : null });
+            return `
+                <div class="slot ${isNow(time) ? 'current-slot' : ''}">
+                    <span class="time">${time}</span>
+                    <span class="${isBusy ? 'p-tag' : 'free-label'}">${isBusy ? raw : 'DISPONÍVEL'}</span>
+                </div>`;
+        };
+
+        if (isManual) {
+            hunt.slots.forEach(s => {
+                const m = s.player.match(/\[(.*?)\]/);
+                if (m) slotsHtml += process(m[1], s.player.replace(/\[.*?\]/, "").trim());
+            });
+        } else {
+            for (let i = 0; i < 8; i++) slotsHtml += process(turnosFixos[i], hunt.slots[i] ? hunt.slots[i].player.trim() : "");
+        }
+
+        const card = document.createElement('div');
+        card.className = 'hunt-card';
+        card.innerHTML = `
+            <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
+                <div class="header-left">
+                    <h2>${cleanName}</h2>
+                    ${infoBadge ? `<span class="info-badge">${infoBadge}</span>` : ''}
+                </div>
+                <div class="header-right">
+                    <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">${vagoCount} Vagas</span>
+                    ${mapaLocal ? `<span class="map-btn" onclick="zoomMap(event, '${mapaLocal}')">Mapa</span>` : ''}
+                </div>
+            </div>
+            <div class="card-content">
+                ${slotsHtml}
+                <button class="copy-btn">Copiar para WhatsApp</button>
+            </div>
+        `;
+
+        card.querySelector('.copy-btn').onclick = () => {
+            let text = `⚔️ *${cleanName.toUpperCase()}*\n\n`;
+            exportData.forEach(s => text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`);
+            const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            card.querySelector('.copy-btn').innerText = 'DADOS COPIADOS!';
+            setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar para WhatsApp', 2000);
+        };
+        return card;
+    }
+
+    function zoomMap(event, src) {
+        event.stopPropagation();
+        document.getElementById('modalImg').src = src;
+        document.getElementById('zoomModal').style.display = 'flex';
+    }
+
+    function render(data) {
+        const container = document.getElementById('main-container');
+        container.innerHTML = '';
+
+        // --- POI ---
+        container.innerHTML += '<div class="section-title">⚔️ Pits of Inferno (POI)</div>';
+        const poiGrid = document.createElement('div'); poiGrid.className = 'column-grid';
+        [{l:'PROFIT', f:'Profit'}, {l:'DRUID (ED)', f:'ED'}, {l:'SORCERER (MS)', f:'MS'}, {l:'PHYSICAL (EK/RP)', f:'EK e RP'}].forEach(sub => {
+            const col = document.createElement('div'); col.className = 'column-group';
+            col.innerHTML = `<div class="column-label">${sub.l}</div>`;
+            data.filter(h => h.nome.includes('POI Selo') && h.nome.includes(sub.f)).forEach(h => col.appendChild(createCard(h)));
+            poiGrid.appendChild(col);
+        });
+        container.appendChild(poiGrid);
+
+        // --- WARZONE ---
+        container.innerHTML += '<div class="section-title">🌀 Warzones</div>';
+        const wzGrid = document.createElement('div'); wzGrid.className = 'column-grid';
+        ['WZ 10', 'WZ 11', 'WZ 12', 'WZ 13'].forEach(wz => {
+            const col = document.createElement('div'); col.className = 'column-group';
+            col.innerHTML = `<div class="column-label">${wz}</div>`;
+            data.filter(h => h.nome.includes(wz)).forEach(h => col.appendChild(createCard(h)));
+            wzGrid.appendChild(col);
+        });
+        container.appendChild(wzGrid);
+
+        // --- OUTRAS ---
+        container.innerHTML += '<div class="section-title">🛡️ Outras Expedições</div>';
+        const outrasGrid = document.createElement('div'); outrasGrid.className = 'column-grid';
+        data.filter(h => !h.nome.includes('POI Selo') && !h.nome.includes('WZ')).forEach(h => outrasGrid.appendChild(createCard(h)));
+        container.appendChild(outrasGrid);
     }
 
     async function fetchData() {
         try {
             const res = await fetch(SCRIPT_URL);
             const data = await res.json();
-            const history = JSON.parse(localStorage.getItem('huntsHistory') || '{}');
-            let globalChanges = [];
-
-            data.forEach(hunt => {
-                const huntID = hunt.nome;
-                const newSlots = hunt.slots.map(s => s.player.trim());
-                const oldSlots = history[huntID] || [];
-                newSlots.forEach((val, i) => {
-                    if (oldSlots[i] !== undefined && val !== oldSlots[i] && val !== "") {
-                        globalChanges.push({ hunt: huntID, index: i, newPlayer: val });
-                    }
-                });
-                history[huntID] = newSlots;
-            });
-
-            localStorage.setItem('huntsHistory', JSON.stringify(history));
-            render(data, globalChanges);
-            document.getElementById('sync-text').innerText = "Atualizado: " + new Date().toLocaleTimeString();
-        } catch (e) { document.getElementById('sync-text').innerText = "Erro de Sincronização"; }
-    }
-
-    function render(data, globalChanges) {
-        const container = document.getElementById('main-container');
-        container.innerHTML = '';
-
-        // Objeto para organizar hunts por categoria
-        const grouped = { 'OUTROS': [] };
-        CATEGORIAS.forEach(cat => grouped[cat.id] = []);
-
-        data.forEach(hunt => {
-            if (!hunt.nome) return;
-            let catEncontrada = 'OUTROS';
-            for (const cat of CATEGORIAS) {
-                if (cat.prefixos.some(p => hunt.nome.toUpperCase().startsWith(p.toUpperCase()))) {
-                    catEncontrada = cat.id;
-                    break;
-                }
-            }
-            grouped[catEncontrada].push(hunt);
-        });
-
-        // Renderizar Grupos
-        const gruposParaRenderizar = [...CATEGORIAS, { id: 'OUTROS', label: 'Outras Hunts' }];
-
-        gruposParaRenderizar.forEach(grupo => {
-            const huntsNoGrupo = grouped[grupo.id];
-            if (huntsNoGrupo.length === 0) return;
-
-            // Criar Título do Separador
-            const title = document.createElement('div');
-            title.className = 'category-title';
-            title.innerText = grupo.label;
-            container.appendChild(title);
-
-            // Criar Grid do Grupo
-            const grid = document.createElement('div');
-            grid.className = 'grid';
-            container.appendChild(grid);
-
-            huntsNoGrupo.forEach(hunt => {
-                let cleanName = hunt.nome;
-                let observation = "";
-                const obsMatch = hunt.nome.match(/\((.*?)\)/);
-                if (obsMatch) {
-                    cleanName = hunt.nome.replace(/\(.*?\)/, '').trim();
-                    observation = obsMatch[1];
-                }
-
-                let slotsHtml = '';
-                let exportData = [];
-                let vagoCount = 0;
-                const huntChanges = globalChanges.filter(c => c.hunt === hunt.nome);
-                const isManualHunt = hunt.slots.some(s => s.player.includes('['));
-
-                const processSlot = (time, rawInput, slotIndex) => {
-                    const isBusy = rawInput.length > 0 && rawInput.toLowerCase() !== "livre";
-                    if (!isBusy) vagoCount++;
-                    exportData.push({ time, player: isBusy ? rawInput : null });
-
-                    const activeClass = isNow(time) ? 'current-slot' : '';
-                    const hasSlotChange = huntChanges.some(c => c.index === slotIndex);
-
-                    let html = `<div class="slot ${activeClass}"><span class="time">${time}</span><div class="player-group">`;
-                    if (isBusy) {
-                        rawInput.split(/[/,]+/).filter(n => n.trim() !== "").forEach(p => {
-                            let name = p.trim(), spot = "";
-                            if (name.includes(':')) [spot, name] = name.split(':');
-                            else if (name.includes('-')) [spot, name] = name.split('-');
-                            html += `<div class="player-row">
-                                ${spot ? `<span class="spot-tag">${spot.trim()}</span>` : ''}
-                                <span class="p-tag" style="border-left-color:${getPlayerColor(name.trim())}">${name.trim()}</span>
-                                ${hasSlotChange ? '<span class="new-player-badge">NOVO</span>' : ''}
-                            </div>`;
-                        });
-                    } else { html += `<span class="free-label">DISPONÍVEL</span>`; }
-                    html += `</div></div>`;
-                    return html;
-                };
-
-                if (isManualHunt) {
-                    hunt.slots.forEach((slot, i) => {
-                        const raw = slot.player.trim();
-                        const match = raw.match(/\[(.*?)\]/);
-                        if (match) slotsHtml += processSlot(match[1], raw.replace(/\[.*?\]/, "").trim(), i);
-                    });
-                } else {
-                    for (let i = 0; i < 8; i++) {
-                        const pName = hunt.slots[i] ? hunt.slots[i].player.trim() : "";
-                        slotsHtml += processSlot(turnosFixos[i], pName, i);
-                    }
-                }
-
-                const card = document.createElement('div');
-                card.className = 'hunt-card';
-                if (huntChanges.length > 0) card.style.borderColor = "var(--gold)";
-
-                card.innerHTML = `
-                    <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
-                        <div class="header-info">
-                            <h2>${cleanName} ${huntChanges.length > 0 ? '★' : ''}</h2>
-                            ${observation ? `<span class="hunt-obs">${observation}</span>` : ''}
-                        </div>
-                        <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">
-                            ${isManualHunt ? 'Personalizado' : vagoCount + ' Vagas'}
-                        </span>
-                    </div>
-                    <div class="card-content">${slotsHtml}<div class="whatsapp-footer"><button class="copy-btn">Copiar WhatsApp</button></div></div>
-                `;
-
-                card.querySelector('.copy-btn').onclick = () => {
-                    let text = `⚔️ *${cleanName.toUpperCase()}* ${observation ? `(${observation})` : ''}\n\n`;
-                    exportData.forEach(s => text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`);
-                    const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-                    card.querySelector('.copy-btn').innerText = 'COPIADO!';
-                    setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar WhatsApp', 2000);
-                };
-                grid.appendChild(card);
-            });
-        });
+            render(data);
+            
+            // Ativa o conteúdo e remove a Splash
+            document.body.classList.add('loaded');
+            document.getElementById('sync-text').innerText = "SINC.: " + new Date().toLocaleTimeString();
+        } catch (e) { 
+            document.querySelector('.sync-text-splash').innerText = "FALHA NA CONEXÃO";
+        }
     }
 
     const sInput = document.getElementById('searchInput');
     const cBtn = document.getElementById('clearSearch');
     sInput.addEventListener('input', (e) => {
         const termo = e.target.value.toLowerCase();
-        cBtn.style.display = termo ? 'block' : 'none';
-        
-        // Esconde cards e títulos de categoria vazios durante a busca
-        document.querySelectorAll('.category-title').forEach(t => t.style.display = termo ? 'none' : 'flex');
+        cBtn.style.display = termo ? 'flex' : 'none';
         document.querySelectorAll('.hunt-card').forEach(card => card.style.display = card.innerText.toLowerCase().includes(termo) ? 'block' : 'none');
     });
     cBtn.onclick = () => { sInput.value = ''; sInput.dispatchEvent(new Event('input')); };
