@@ -276,7 +276,7 @@
         // --- POI ---
         container.innerHTML += '<div class="section-title">⚔️ Pits of Inferno (POI)</div>';
         const poiGrid = document.createElement('div'); poiGrid.className = 'column-grid';
-        [{l:'PROFIT', f:'Profit'}, {l:'DRUID (ED)', f:'ED'}, {l:'SORCERER (MS)', f:'MS'}, {l:'PHYSICAL (EK/RP)', f:'EK e RP'}].forEach(sub => {
+        [{l:'PROFIT', f:'Profit'}, {l:'ED', f:'ED'}, {l:'MS', f:'MS'}, {l:'EK/RP', f:'EK e RP'}].forEach(sub => {
             const col = document.createElement('div'); col.className = 'column-group';
             col.innerHTML = `<div class="column-label">${sub.l}</div>`;
             data.filter(h => h.nome.includes('POI Selo') && h.nome.includes(sub.f)).forEach(h => col.appendChild(createCard(h)));
