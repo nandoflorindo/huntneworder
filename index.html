@@ -12,60 +12,62 @@
             --gold: #d4af37;
             --gold-light: #f1d57a;
             --green: #10b981;
+            --red: #ef4444;
             --text: #f4f4f5;
             --accent: rgba(212, 175, 55, 0.1);
+            
+            /* Cores EK/RP */
+            --norte: #3b82f6;
+            --sul-esq: #facc15;
+            --sul-dir: #ef4444;
         }
 
         body, html {
             background-color: var(--bg);
             color: var(--text);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0; padding: 0;
             overflow-x: hidden;
         }
 
-        /* --- ANIMAÇÃO DE ENTRADA (SPLASH SCREEN) --- */
+        /* --- SPLASH SCREEN --- */
         #splash-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); z-index: 10000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             transition: all 1s cubic-bezier(0.9, 0, 0.1, 1);
         }
-
         .loader-ring {
             width: 80px; height: 80px; border: 2px solid rgba(212, 175, 55, 0.1);
             border-top: 2px solid var(--gold); border-radius: 50%;
             animation: spin 0.8s cubic-bezier(0.5, 0, 0.5, 1) infinite;
             position: relative;
         }
-
         .loader-ring::after {
             content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
             border: 1px solid rgba(212, 175, 55, 0.05); border-top: 1px solid var(--gold-light);
             border-radius: 50%; animation: spin 1.5s reverse infinite;
         }
-
         .sync-text-splash {
             margin-top: 25px; font-size: 0.65rem; letter-spacing: 5px;
             color: var(--gold); text-transform: uppercase; font-weight: 900;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
             animation: blink 1.2s infinite;
         }
-
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        /* Efeito de transição do conteúdo */
+        /* --- TRANSIÇÃO --- */
         #main-wrapper { opacity: 0; transform: scale(0.98); filter: blur(10px); transition: all 1.2s ease; }
         body.loaded #main-wrapper { opacity: 1; transform: scale(1); filter: blur(0); }
         body.loaded #splash-screen { opacity: 0; visibility: hidden; }
 
-        /* --- ESTRUTURA DASHBOARD --- */
+        /* --- HEADER E BUSCA (GLASSMORPHISM) --- */
         .search-header {
             position: sticky; top: 0; width: 100%;
             background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
             padding: 15px 0; z-index: 1000; border-bottom: 1px solid var(--border);
             display: flex; justify-content: center; align-items: center;
+            animation: fadeInDown 0.8s forwards;
         }
         .search-container { position: relative; width: 90%; max-width: 450px; display: flex; align-items: center; }
         #searchInput {
@@ -73,7 +75,7 @@
             border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05);
             color: #fff; outline: none; box-sizing: border-box; transition: 0.3s;
         }
-        #searchInput:focus { border-color: var(--gold); background: rgba(255, 255, 255, 0.08); }
+        #searchInput:focus { border-color: var(--gold); background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
         #clearSearch {
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
             background: var(--border); color: #fff; border: none; border-radius: 50%;
@@ -81,11 +83,11 @@
             align-items: center; justify-content: center;
         }
 
-        header { text-align: center; margin: 60px 0 40px; }
+        header { text-align: center; margin: 60px 0 40px; animation: fadeIn 1s forwards; }
         .logo { max-width: 130px; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.3)); }
         h1 { font-size: 1.4rem; font-weight: 900; color: var(--gold); letter-spacing: 5px; text-transform: uppercase; margin: 20px 0 5px; }
-        #sync-text { font-size: 0.6rem; color: #52525b; text-transform: uppercase; font-weight: bold; letter-spacing: 2px; }
 
+        /* --- GRIDS --- */
         .section-container { width: 98%; max-width: 1500px; margin: 0 auto; }
         .section-title {
             margin: 40px 0 20px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
@@ -97,37 +99,41 @@
             gap: 15px; margin-bottom: 30px;
         }
         .column-group { display: flex; flex-direction: column; gap: 12px; }
-        .column-label {
-            font-size: 0.7rem; color: #a1a1aa; font-weight: 800; text-transform: uppercase;
-            border-left: 3px solid var(--gold); padding-left: 10px; margin-bottom: 5px;
+        
+        .column-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 5px; border-left: 3px solid var(--gold); padding-left: 10px;
         }
+        .column-label { font-size: 0.7rem; color: #a1a1aa; font-weight: 800; text-transform: uppercase; }
 
+        .map-btn-title {
+            font-size: 0.6rem; color: var(--gold); font-weight: 900;
+            background: rgba(212, 175, 55, 0.05); padding: 2px 8px;
+            border-radius: 4px; border: 1px solid var(--gold);
+            cursor: pointer; text-transform: uppercase; transition: 0.2s;
+        }
+        .map-btn-title:hover { background: var(--gold); color: #000; }
+
+        /* --- CARDS --- */
         .hunt-card {
             background: var(--card); border: 1px solid var(--border); border-radius: 12px;
             overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .hunt-card:hover { border-color: #444; transform: translateY(-3px); }
-        
+        .hunt-card:hover { border-color: #444; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
         .card-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .header-left { display: flex; flex-direction: column; gap: 6px; flex: 1; }
         .header-left h2 { margin: 0; font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; }
+        
+        /* BADGES COLORIDAS */
         .info-badge {
-            display: inline-block; font-size: 0.6rem; color: var(--gold);
-            background: rgba(212, 175, 55, 0.08); padding: 2px 8px;
-            border-radius: 5px; border: 1px solid rgba(212, 175, 55, 0.2);
-            font-weight: 800; width: fit-content; text-transform: uppercase;
+            display: inline-block; font-size: 0.65rem; padding: 2px 10px;
+            border-radius: 5px; font-weight: 800; text-transform: uppercase; margin-top: 5px;
         }
+        .hunt-ekrp .badge-norte { background: rgba(59, 130, 246, 0.15); color: var(--norte); border: 1px solid var(--norte); }
+        .hunt-ekrp .badge-sul-esq { background: var(--sul-esq); color: #000; border: 1px solid var(--sul-esq); }
+        .hunt-ekrp .badge-sul-dir { background: rgba(239, 68, 68, 0.15); color: var(--sul-dir); border: 1px solid var(--sul-dir); }
+        .badge-default { background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); }
 
-        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-        .map-btn {
-            font-size: 0.6rem; color: var(--gold); font-weight: 900;
-            background: rgba(212, 175, 55, 0.05); padding: 4px 10px;
-            border-radius: 6px; border: 1px solid var(--gold);
-            text-transform: uppercase; transition: 0.2s;
-        }
-        .map-btn:hover { background: var(--gold); color: #000; }
         .avail-tag { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
-
         .card-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; background: #0c0c0e; }
         .hunt-card.active .card-content { max-height: 1500px; border-top: 1px solid var(--border); }
 
@@ -140,9 +146,16 @@
         .copy-btn { 
             background: transparent; color: var(--gold); border: 1px solid var(--gold); 
             width: calc(100% - 30px); margin: 15px; padding: 10px; border-radius: 8px; 
-            font-size: 0.75rem; font-weight: 800; cursor: pointer; text-transform: uppercase;
+            font-size: 0.75rem; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s;
         }
+        .copy-btn:hover { background: var(--gold); color: #000; }
 
+        /* --- ANIMAÇÕES --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MODAL --- */
         #zoomModal {
             display: none; position: fixed; z-index: 10001; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.98); backdrop-filter: blur(15px); justify-content: center; align-items: center;
@@ -162,7 +175,7 @@
 
     <div class="search-header">
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Buscar hunt ou player ativo...">
+            <input type="text" id="searchInput" placeholder="Pesquisar local ou player...">
             <button id="clearSearch">✕</button>
         </div>
     </div>
@@ -170,7 +183,6 @@
     <header>
         <img src="logoneworder.png" alt="NEW ORDER" class="logo">
         <h1>New Order - Hunts</h1>
-        <div id="sync-text">SISTEMA OPERACIONAL</div>
     </header>
 
     <div id="main-container" class="section-container"></div>
@@ -180,10 +192,9 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOCLLCCS7oC4kj6KYzEymrb3sXXh7lSt-qEtkcX7qas23tEGDfppFxIOowPWYqQ-1v/exec';
     const turnosFixos = ["10:00-13:00", "13:00-16:00", "16:00-19:00", "19:00-22:00", "22:00-01:00", "01:00-04:00", "04:00-07:00", "07:00-10:00"];
 
-    const MAPAS_CONFIG = {
-        "POI Selo EK e RP (Norte)": "eknorte.jpeg",
-        "POI Selo EK e RP (Sul Esquerda)": "eksulesquerda.jpeg",
-        "POI Selo EK e RP (Sul Direita)": "eksuldireita.jpeg"
+    // CONFIG MAPAS COLUNAS - Adicione aqui qualquer título de coluna
+    const MAPAS_COLUNAS = {
+        "EK/RP": "poiekrp.jpeg",
     };
 
     function isNow(range) {
@@ -198,15 +209,25 @@
         } catch(e) { return false; }
     }
 
-    function createCard(hunt) {
-        const mapaLocal = MAPAS_CONFIG[hunt.nome];
-        let cleanName = hunt.nome;
-        let infoBadge = "";
+    function getBadgeMarkup(info, isEKRP) {
+        if (!info) return "";
+        let colorClass = "badge-default";
+        if (isEKRP) {
+            const t = info.toLowerCase();
+            if (t.includes("norte")) colorClass = "badge-norte";
+            else if (t.includes("sul esquerda")) colorClass = "badge-sul-esq";
+            else if (t.includes("sul direita")) colorClass = "badge-sul-dir";
+        }
+        return `<span class="info-badge ${colorClass}">${info}</span>`;
+    }
 
+    function createCard(hunt, categoryLabel) {
+        const isEKRP = categoryLabel === "EK/RP";
+        let cleanName = hunt.nome, infoText = "";
         const match = hunt.nome.match(/\((.*?)\)/);
         if (match) {
             cleanName = hunt.nome.replace(/\(.*?\)/, '').trim();
-            infoBadge = match[1];
+            infoText = match[1];
         }
 
         let slotsHtml = '';
@@ -218,11 +239,7 @@
             const isBusy = raw.length > 0 && raw.toLowerCase() !== "livre";
             if (!isBusy) vagoCount++;
             exportData.push({ time, player: isBusy ? raw : null });
-            return `
-                <div class="slot ${isNow(time) ? 'current-slot' : ''}">
-                    <span class="time">${time}</span>
-                    <span class="${isBusy ? 'p-tag' : 'free-label'}">${isBusy ? raw : 'DISPONÍVEL'}</span>
-                </div>`;
+            return `<div class="slot ${isNow(time) ? 'current-slot' : ''}"><span class="time">${time}</span><span class="${isBusy ? 'p-tag' : 'free-label'}">${isBusy ? raw : 'DISPONÍVEL'}</span></div>`;
         };
 
         if (isManual) {
@@ -235,38 +252,29 @@
         }
 
         const card = document.createElement('div');
-        card.className = 'hunt-card';
+        card.className = `hunt-card ${isEKRP ? 'hunt-ekrp' : ''}`;
         card.innerHTML = `
             <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
                 <div class="header-left">
                     <h2>${cleanName}</h2>
-                    ${infoBadge ? `<span class="info-badge">${infoBadge}</span>` : ''}
+                    ${getBadgeMarkup(infoText, isEKRP)}
                 </div>
-                <div class="header-right">
-                    <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">${vagoCount} Vagas</span>
-                    ${mapaLocal ? `<span class="map-btn" onclick="zoomMap(event, '${mapaLocal}')">Mapa</span>` : ''}
-                </div>
+                <span class="avail-tag" style="color:${vagoCount > 0 ? 'var(--green)' : 'var(--red)'}">${vagoCount} Vagas</span>
             </div>
             <div class="card-content">
                 ${slotsHtml}
-                <button class="copy-btn">Copiar para WhatsApp</button>
+                <button class="copy-btn">Copiar WhatsApp</button>
             </div>
         `;
 
         card.querySelector('.copy-btn').onclick = () => {
-            let text = `⚔️ *${cleanName.toUpperCase()}*\n\n`;
+            let text = `⚔️ *${cleanName.toUpperCase()}* ${infoText ? `(${infoText})` : ''}\n\n`;
             exportData.forEach(s => text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`);
             const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
             card.querySelector('.copy-btn').innerText = 'DADOS COPIADOS!';
-            setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar para WhatsApp', 2000);
+            setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar WhatsApp', 2000);
         };
         return card;
-    }
-
-    function zoomMap(event, src) {
-        event.stopPropagation();
-        document.getElementById('modalImg').src = src;
-        document.getElementById('zoomModal').style.display = 'flex';
     }
 
     function render(data) {
@@ -278,8 +286,9 @@
         const poiGrid = document.createElement('div'); poiGrid.className = 'column-grid';
         [{l:'PROFIT', f:'Profit'}, {l:'ED', f:'ED'}, {l:'MS', f:'MS'}, {l:'EK/RP', f:'EK e RP'}].forEach(sub => {
             const col = document.createElement('div'); col.className = 'column-group';
-            col.innerHTML = `<div class="column-label">${sub.l}</div>`;
-            data.filter(h => h.nome.includes('POI Selo') && h.nome.includes(sub.f)).forEach(h => col.appendChild(createCard(h)));
+            const mapImg = MAPAS_COLUNAS[sub.l];
+            col.innerHTML = `<div class="column-header"><span class="column-label">${sub.l}</span>${mapImg ? `<span class="map-btn-title" onclick="document.getElementById('modalImg').src='${mapImg}'; document.getElementById('zoomModal').style.display='flex'">Mapa</span>` : ''}</div>`;
+            data.filter(h => h.nome.includes('POI Selo') && h.nome.includes(sub.f)).forEach(h => col.appendChild(createCard(h, sub.l)));
             poiGrid.appendChild(col);
         });
         container.appendChild(poiGrid);
@@ -289,8 +298,9 @@
         const wzGrid = document.createElement('div'); wzGrid.className = 'column-grid';
         ['WZ 10', 'WZ 11', 'WZ 12', 'WZ 13'].forEach(wz => {
             const col = document.createElement('div'); col.className = 'column-group';
-            col.innerHTML = `<div class="column-label">${wz}</div>`;
-            data.filter(h => h.nome.includes(wz)).forEach(h => col.appendChild(createCard(h)));
+            const mapImg = MAPAS_COLUNAS[wz];
+            col.innerHTML = `<div class="column-header"><span class="column-label">${wz}</span>${mapImg ? `<span class="map-btn-title" onclick="document.getElementById('modalImg').src='${mapImg}'; document.getElementById('zoomModal').style.display='flex'">Mapa</span>` : ''}</div>`;
+            data.filter(h => h.nome.includes(wz)).forEach(h => col.appendChild(createCard(h, wz)));
             wzGrid.appendChild(col);
         });
         container.appendChild(wzGrid);
@@ -298,7 +308,7 @@
         // --- OUTRAS ---
         container.innerHTML += '<div class="section-title">🛡️ Outras Hunts</div>';
         const outrasGrid = document.createElement('div'); outrasGrid.className = 'column-grid';
-        data.filter(h => !h.nome.includes('POI Selo') && !h.nome.includes('WZ')).forEach(h => outrasGrid.appendChild(createCard(h)));
+        data.filter(h => !h.nome.includes('POI Selo') && !h.nome.includes('WZ')).forEach(h => outrasGrid.appendChild(createCard(h, "Outros")));
         container.appendChild(outrasGrid);
     }
 
@@ -307,13 +317,8 @@
             const res = await fetch(SCRIPT_URL);
             const data = await res.json();
             render(data);
-            
-            // Ativa o conteúdo e remove a Splash
             document.body.classList.add('loaded');
-            document.getElementById('sync-text').innerText = "SINC.: " + new Date().toLocaleTimeString();
-        } catch (e) { 
-            document.querySelector('.sync-text-splash').innerText = "FALHA NA CONEXÃO";
-        }
+        } catch (e) { document.querySelector('.sync-text-splash').innerText = "FALHA NA CONEXÃO"; }
     }
 
     const sInput = document.getElementById('searchInput');
