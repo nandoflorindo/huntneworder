@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Order - Pro Dashboard</title>
+    <title>New Order - Hunts</title>
     <style>
         :root {
             --bg: #050507;
@@ -296,7 +296,7 @@
         container.appendChild(wzGrid);
 
         // --- OUTRAS ---
-        container.innerHTML += '<div class="section-title">🛡️ Outras Expedições</div>';
+        container.innerHTML += '<div class="section-title">🛡️ Outras Hunts</div>';
         const outrasGrid = document.createElement('div'); outrasGrid.className = 'column-grid';
         data.filter(h => !h.nome.includes('POI Selo') && !h.nome.includes('WZ')).forEach(h => outrasGrid.appendChild(createCard(h)));
         container.appendChild(outrasGrid);
