@@ -123,16 +123,13 @@
         .card-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
         .header-left h2 { margin: 0; font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; }
         
-        /* BADGES COLORIDAS (ESTILO TRANSLÚCIDO) */
+        /* BADGES COLORIDAS */
         .info-badge {
             display: inline-block; font-size: 0.65rem; padding: 2px 10px;
             border-radius: 5px; font-weight: 800; text-transform: uppercase; margin-top: 5px;
         }
-        /* Norte: Azul Translúcido */
         .hunt-ekrp .badge-norte { background: rgba(59, 130, 246, 0.15); color: var(--norte); border: 1px solid var(--norte); }
-        /* Sul Esquerda: Amarelo Translúcido (Corrigido conforme solicitado) */
         .hunt-ekrp .badge-sul-esq { background: rgba(250, 204, 21, 0.15); color: var(--sul-esq); border: 1px solid var(--sul-esq); }
-        /* Sul Direita: Vermelho Translúcido */
         .hunt-ekrp .badge-sul-dir { background: rgba(239, 68, 68, 0.15); color: var(--sul-dir); border: 1px solid var(--sul-dir); }
         
         .badge-default { background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); }
@@ -146,13 +143,6 @@
         .time { font-family: 'Roboto Mono', monospace; color: #71717a; font-weight: 600; }
         .p-tag { background: #27272a; color: #fff; padding: 3px 10px; border-radius: 6px; font-weight: 600; border-left: 2px solid var(--gold); }
         .free-label { color: var(--green); font-weight: 800; opacity: 0.8; }
-        
-        .copy-btn { 
-            background: transparent; color: var(--gold); border: 1px solid var(--gold); 
-            width: calc(100% - 30px); margin: 15px; padding: 10px; border-radius: 8px; 
-            font-size: 0.75rem; font-weight: 800; cursor: pointer; text-transform: uppercase; transition: 0.3s;
-        }
-        .copy-btn:hover { background: var(--gold); color: #000; }
 
         /* --- ANIMAÇÕES --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -196,10 +186,7 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyOCLLCCS7oC4kj6KYzEymrb3sXXh7lSt-qEtkcX7qas23tEGDfppFxIOowPWYqQ-1v/exec';
     const turnosFixos = ["10:00-13:00", "13:00-16:00", "16:00-19:00", "19:00-22:00", "22:00-01:00", "01:00-04:00", "04:00-07:00", "07:00-10:00"];
 
-    // CONFIG MAPAS COLUNAS
-    const MAPAS_COLUNAS = {
-        "EK/RP": "poiekrp.jpeg", 
-    };
+    const MAPAS_COLUNAS = { "EK/RP": "poiekrp.jpeg" };
 
     function isNow(range) {
         try {
@@ -236,13 +223,11 @@
 
         let slotsHtml = '';
         let vagoCount = 0;
-        let exportData = [];
         const isManual = hunt.slots.some(s => s.player.includes('['));
 
         const process = (time, raw) => {
             const isBusy = raw.length > 0 && raw.toLowerCase() !== "livre";
             if (!isBusy) vagoCount++;
-            exportData.push({ time, player: isBusy ? raw : null });
             return `<div class="slot ${isNow(time) ? 'current-slot' : ''}"><span class="time">${time}</span><span class="${isBusy ? 'p-tag' : 'free-label'}">${isBusy ? raw : 'DISPONÍVEL'}</span></div>`;
         };
 
@@ -267,17 +252,8 @@
             </div>
             <div class="card-content">
                 ${slotsHtml}
-                <button class="copy-btn">Copiar WhatsApp</button>
             </div>
         `;
-
-        card.querySelector('.copy-btn').onclick = () => {
-            let text = `⚔️ *${cleanName.toUpperCase()}* ${infoText ? `(${infoText})` : ''}\n\n`;
-            exportData.forEach(s => text += `🕒 [${s.time}] ${s.player || '🟢 DISPONÍVEL'}\n`);
-            const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            card.querySelector('.copy-btn').innerText = 'DADOS COPIADOS!';
-            setTimeout(() => card.querySelector('.copy-btn').innerText = 'Copiar WhatsApp', 2000);
-        };
         return card;
     }
 
