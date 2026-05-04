@@ -276,7 +276,7 @@
         // --- WARZONE ---
         container.innerHTML += '<div class="section-title">🌀 Warzones</div>';
         const wzGrid = document.createElement('div'); wzGrid.className = 'column-grid';
-        ['WZ 10', 'WZ 11', 'WZ 12', 'WZ 13'].forEach(wz => {
+        ['WZ 10', 'WZ 20', 'WZ 30', 'WZ 40'].forEach(wz => {
             const col = document.createElement('div'); col.className = 'column-group';
             const mapImg = MAPAS_COLUNAS[wz];
             col.innerHTML = `<div class="column-header"><span class="column-label">${wz}</span>${mapImg ? `<span class="map-btn-title" onclick="document.getElementById('modalImg').src='${mapImg}'; document.getElementById('zoomModal').style.display='flex'">Mapa</span>` : ''}</div>`;
